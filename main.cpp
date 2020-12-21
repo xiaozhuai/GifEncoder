@@ -4,7 +4,7 @@
 #include <vector>
 #include <chrono>
 #include "stb_image.h"
-#include "gif/GifEncoder.h"
+#include "GifEncoder.h"
 
 #define NOW (std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now().time_since_epoch()).count())
 

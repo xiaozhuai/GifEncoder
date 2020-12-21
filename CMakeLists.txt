@@ -3,7 +3,9 @@ project(GifEncoder)
 
 set(CMAKE_CXX_STANDARD 11)
 
-file(GLOB_RECURSE EGIF_SOURCES "gif/*.h" "gif/*.cpp")
+include_directories(egif)
+
+file(GLOB_RECURSE EGIF_SOURCES "egif/*.h" "egif/*.cpp")
 
 add_library(egif STATIC ${EGIF_SOURCES})
 

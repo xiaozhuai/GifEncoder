@@ -13,7 +13,8 @@ public:
             : data(_data),
               format(_format),
               width(_width),
-              height(_height) {}
+              height(_height),
+              needFree(false) {}
 
     bool load(const std::string &file, GifEncoder::PixelFormat _format) {
         int w = 0;
@@ -52,6 +53,7 @@ public:
                 return false;
         }
 
+        needFree = true;
         data = pixels;
         format = _format;
         width = w;
@@ -60,7 +62,10 @@ public:
     }
 
     void release() {
-        stbi_image_free(data);
+        if (needFree) {
+            stbi_image_free(data);
+            needFree = false;
+        }
         format = GifEncoder::PIXEL_FORMAT_UNKNOWN;
         width = 0;
         height = 0;
@@ -71,6 +76,9 @@ public:
     GifEncoder::PixelFormat format = GifEncoder::PIXEL_FORMAT_UNKNOWN;
     int width = 0;
     int height = 0;
+
+private:
+    bool needFree = false;
 };
 
 std::vector<Bitmap> loadImages(const char *fmt, int count) {

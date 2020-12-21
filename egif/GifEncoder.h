@@ -27,7 +27,11 @@ public:
      * @param width gif width
      * @param height gif height
      * @param quality 1..30, 1 is best
+     * @param useGlobalColorMap
      * @param loop loop count, 0 is endless
+     * @param For better performance, it's suggested to set preAllocSize. If you can't determine it, set to 0.
+     *        If use global color map, all frames size must be same, and preAllocSize = width * height * 3 * nFrame
+     *        If use local color map, preAllocSize = MAX(width * height) * 3
      * @return
      */
     bool open(const std::string &file, int width, int height,

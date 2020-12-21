@@ -39,31 +39,43 @@ static void getRasterBits(uint8_t *rasterBits, const uint8_t *pixels, int nPixel
     }
 }
 
+inline void RGB2BGR(uint8_t *dst, const uint8_t *src, int width, int height) {
+    for (int i = 0; i < width * height; ++i) {
+        dst[i * 3] = src[i * 3 + 2];
+        dst[i * 3 + 1] = src[i * 3 + 1];
+        dst[i * 3 + 2] = src[i * 3];
+    }
+}
+
+inline void BGRA2BGR(uint8_t *dst, const uint8_t *src, int width, int height) {
+    for (int i = 0; i < width * height; ++i) {
+        dst[i * 3] = src[i * 4];
+        dst[i * 3 + 1] = src[i * 4 + 1];
+        dst[i * 3 + 2] = src[i * 4 + 2];
+    }
+}
+
+inline void RGBA2BGR(uint8_t *dst, const uint8_t *src, int width, int height) {
+    for (int i = 0; i < width * height; ++i) {
+        dst[i * 3] = src[i * 4 + 2];
+        dst[i * 3 + 1] = src[i * 4 + 1];
+        dst[i * 3 + 2] = src[i * 4];
+    }
+}
+
 static bool convertToBGR(GifEncoder::PixelFormat format, uint8_t *dst, const uint8_t *src, int width, int height) {
     switch (format) {
         case GifEncoder::PIXEL_FORMAT_BGR:
             memcpy(dst, src, width * height * 3);
             break;
         case GifEncoder::PIXEL_FORMAT_RGB:
-            for (int i = 0; i < width * height; ++i) {
-                dst[i * 3] = src[i * 3 + 2];
-                dst[i * 3 + 1] = src[i * 3 + 1];
-                dst[i * 3 + 2] = src[i * 3];
-            }
+            RGB2BGR(dst, src, width, height);
             break;
         case GifEncoder::PIXEL_FORMAT_BGRA:
-            for (int i = 0; i < width * height; ++i) {
-                dst[i * 3] = src[i * 4];
-                dst[i * 3 + 1] = src[i * 4 + 1];
-                dst[i * 3 + 2] = src[i * 4 + 2];
-            }
+            BGRA2BGR(dst, src, width, height);
             break;
         case GifEncoder::PIXEL_FORMAT_RGBA:
-            for (int i = 0; i < width * height; ++i) {
-                dst[i * 3] = src[i * 4 + 2];
-                dst[i * 3 + 1] = src[i * 4 + 1];
-                dst[i * 3 + 2] = src[i * 4];
-            }
+            RGBA2BGR(dst, src, width, height);
             break;
         default:
             return false;

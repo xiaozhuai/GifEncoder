@@ -2,8 +2,11 @@
 
 #include <iostream>
 #include <vector>
+#include <chrono>
 #include "stb_image.h"
 #include "gif/GifEncoder.h"
+
+#define NOW (std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now().time_since_epoch()).count())
 
 class Bitmap {
 public:
@@ -89,7 +92,10 @@ std::vector<Bitmap> loadImages(const char *fmt, int count) {
         Bitmap frame;
         frame.load(file, GifEncoder::PIXEL_FORMAT_BGR);
         frames.emplace_back(frame);
-        printf("Loaded frame %s, size: (%d, %d), format: %d\n", file, frame.width, frame.height, frame.format);
+        if (!frame.data) {
+            fprintf(stderr, "Error load frame %s, size: (%d, %d), format: %d\n", file, frame.width, frame.height,
+                    frame.format);
+        }
     }
     return frames;
 }
@@ -101,34 +107,67 @@ void releaseImages(std::vector<Bitmap> &frames) {
     frames.clear();
 }
 
-int main() {
-    auto frames = loadImages("../frames/frame_%d.jpg", 4);
 
-    int delay = 20;  // 20 * 0.01s
-    int quality = 10; // 1..30, Lower values (minimum = 1) produce better colors, but slow processing significantly.
+void encodeGif(const char *fmt, int count, const char *output,
+               int width, int height,
+               int quality, int delay,
+               bool useGlobalColorMap, int preAllocSize = 0) {
+    int64_t lastTime = NOW;
+
+    auto frames = loadImages(fmt, count);
 
     GifEncoder gifEncoder;
 
-    if (!gifEncoder.open("out.gif", 600, 392)) {
+    if (!gifEncoder.open(output, width, height, quality, useGlobalColorMap, 0, preAllocSize)) {
         fprintf(stderr, "Error open gif file\n");
-        return 1;
+        return;
     }
 
-    for (int i = 0; i < frames.size(); ++i) {
-        auto &frame = frames[i];
-        if (gifEncoder.push(frame.format, frame.data, frame.width, frame.height, delay, quality)) {
-            printf("Encoded frame %d/%lu\n", i + 1, frames.size());
-        } else {
+    for (auto &frame : frames) {
+        if (!gifEncoder.push(frame.format, frame.data, frame.width, frame.height, delay)) {
             fprintf(stderr, "Error add a frame\n");
         }
     }
 
     if (!gifEncoder.close()) {
         fprintf(stderr, "Error close gif file\n");
-        return 1;
+        return;
     }
 
     releaseImages(frames);
+
+    printf("Encoded %s, spend %lldμs\n", output, NOW - lastTime);
+}
+
+int main() {
+    /**
+     * For better performance, it's suggested to set preAllocSize. If you can't determine it, set to 0.
+     * If use global color map, all frames size must be same, and preAllocSize = width * height * 3 * nFrame
+     * If use local color map, preAllocSize = MAX(width * height) * 3
+     *
+     * quality: 1..30, Lower values (minimum = 1) produce better colors, but slow processing significantly.
+     * delay: delay * 0.01s
+     */
+
+    encodeGif("../frames/frame_%d.jpg", 4, "out_lcm.gif",
+              600, 392,
+              10, 20,
+              false, 600 * 392 * 3);
+
+    encodeGif("../frames/frame_%d.jpg", 4, "out_gcm.gif",
+              600, 392,
+              10, 20,
+              true, 600 * 392 * 3 * 4);
+
+//    encodeGif("../frames2/frame_%d.jpg", 40, "test_lcm.gif",
+//              360, 360,
+//              10, 10,
+//              false, 360 * 360 * 3);
+//
+//    encodeGif("../frames2/frame_%d.jpg", 40, "test_gcm.gif",
+//              360, 360,
+//              10, 10,
+//              true, 360 * 360 * 3 * 40);
 
     return 0;
 }

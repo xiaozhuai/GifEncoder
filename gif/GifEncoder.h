@@ -6,6 +6,7 @@
 #define GIF_GIFENCODER_H
 
 #include <string>
+#include <vector>
 
 class GifEncoder {
 public:
@@ -25,10 +26,12 @@ public:
      * @param file file path
      * @param width gif width
      * @param height gif height
-     * @param loop loop count, 0 for endless
+     * @param quality 1..30, 1 is best
+     * @param loop loop count, 0 is endless
      * @return
      */
-    bool open(const std::string &file, int width, int height, int16_t loop = 0);
+    bool open(const std::string &file, int width, int height,
+              int quality, bool useGlobalColorMap, int16_t loop, int preAllocSize = 0);
 
     /**
      * add frame
@@ -38,10 +41,9 @@ public:
      * @param width frame width
      * @param height frame height
      * @param delay delay time 0.01s
-     * @param quality 1..30, 1 for best
      * @return
      */
-    bool push(PixelFormat format, const uint8_t *frame, int width, int height, int delay, int quality);
+    bool push(PixelFormat format, const uint8_t *frame, int width, int height, int delay);
 
     /**
      * close gif file
@@ -51,7 +53,36 @@ public:
     bool close();
 
 private:
+    inline bool isFirstFrame() const {
+        return m_frameCount == 0;
+    }
+
+    inline void reset() {
+        if (m_framePixels != nullptr) {
+            free(m_framePixels);
+            m_framePixels = nullptr;
+        }
+        m_allocSize = 0;
+        m_allFrameDelays.clear();
+        m_frameCount = 0;
+        m_frameWidth = -1;
+        m_frameHeight = -1;
+    }
+
+    void encodeFrame(int width, int height, int delay, void *colorMap, void *rasterBits);
+
+private:
     void *m_gifFileHandler = nullptr;
+
+    int m_quality = 10;
+    bool m_useGlobalColorMap = false;
+
+    uint8_t *m_framePixels = nullptr;
+    int m_allocSize = 0;
+    std::vector<int> m_allFrameDelays{};
+    int m_frameCount = 0;
+    int m_frameWidth = -1;
+    int m_frameHeight = -1;
 };
 
 

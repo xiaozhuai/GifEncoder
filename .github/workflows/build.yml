@@ -31,7 +31,7 @@ jobs:
                     mkdir egif/lib
                     mkdir egif/gif
                     cp -rf ../frames egif/
-                    cp -f out.gif egif/gif/
+                    cp -f *.gif egif/gif/
                     cp -f egif_demo egif/bin/
                     cp -f libegif.a egif/lib/
                     cp -f ../gif/GifEncoder.h egif/include/
@@ -64,7 +64,7 @@ jobs:
                     mkdir egif/lib
                     mkdir egif/gif
                     cp -rf ../frames egif/
-                    cp -f out.gif egif/gif/
+                    cp -f *.gif egif/gif/
                     cp -f egif_demo egif/bin/
                     cp -f libegif.a egif/lib/
                     cp -f ../gif/GifEncoder.h egif/include/
@@ -100,7 +100,7 @@ jobs:
                     mkdir egif/lib
                     mkdir egif/gif
                     cp -rf ../frames egif/
-                    cp -f out.gif egif/gif/
+                    cp -f *.gif egif/gif/
                     cp -f egif_demo.exe egif/bin/
                     cp -f egif.lib egif/lib/
                     cp -f ../gif/GifEncoder.h egif/include/
@@ -136,7 +136,7 @@ jobs:
                     mkdir egif/lib
                     mkdir egif/gif
                     cp -rf ../frames egif/
-                    cp -f out.gif egif/gif/
+                    cp -f *.gif egif/gif/
                     cp -f egif_demo.exe egif/bin/
                     cp -f egif.lib egif/lib/
                     cp -f ../gif/GifEncoder.h egif/include/

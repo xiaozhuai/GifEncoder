@@ -37,3 +37,7 @@ cmake -DCMAKE_BUILD_TYPE=Release -G "NMake Makefiles" ..
 nmake
 egif_demo.exe
 ```
+
+## Android & iOS
+
+Build it by yourself

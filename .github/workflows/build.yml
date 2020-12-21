@@ -34,7 +34,7 @@ jobs:
                     cp -f *.gif egif/gif/
                     cp -f egif_demo egif/bin/
                     cp -f libegif.a egif/lib/
-                    cp -f ../gif/GifEncoder.h egif/include/
+                    cp -f ../egif/GifEncoder.h egif/include/
             -   name: Upload Artifact
                 uses: actions/upload-artifact@v2
                 with:
@@ -67,7 +67,7 @@ jobs:
                     cp -f *.gif egif/gif/
                     cp -f egif_demo egif/bin/
                     cp -f libegif.a egif/lib/
-                    cp -f ../gif/GifEncoder.h egif/include/
+                    cp -f ../egif/GifEncoder.h egif/include/
             -   name: Upload Artifact
                 uses: actions/upload-artifact@v2
                 with:
@@ -103,7 +103,7 @@ jobs:
                     cp -f *.gif egif/gif/
                     cp -f egif_demo.exe egif/bin/
                     cp -f egif.lib egif/lib/
-                    cp -f ../gif/GifEncoder.h egif/include/
+                    cp -f ../egif/GifEncoder.h egif/include/
             -   name: Upload Artifact
                 uses: actions/upload-artifact@v2
                 with:
@@ -139,7 +139,7 @@ jobs:
                     cp -f *.gif egif/gif/
                     cp -f egif_demo.exe egif/bin/
                     cp -f egif.lib egif/lib/
-                    cp -f ../gif/GifEncoder.h egif/include/
+                    cp -f ../egif/GifEncoder.h egif/include/
             -   name: Upload Artifact
                 uses: actions/upload-artifact@v2
                 with:

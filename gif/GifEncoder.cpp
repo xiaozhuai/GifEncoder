@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <exception>
+#include <stdexcept>
 #include <cstdlib>
 #include <cstring>
 #include "GifEncoder.h"

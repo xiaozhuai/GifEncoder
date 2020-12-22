@@ -92,11 +92,11 @@ std::vector<Bitmap> loadImages(const char *fmt, int count) {
         snprintf(file, 1024, fmt, i);
         Bitmap frame;
         frame.load(file, GifEncoder::PIXEL_FORMAT_BGR);
-        frames.emplace_back(frame);
         if (!frame.data) {
             fprintf(stderr, "Error load frame %s, size: (%d, %d), format: %d\n", file, frame.width, frame.height,
                     frame.format);
         }
+        frames.emplace_back(frame);
     }
     return frames;
 }

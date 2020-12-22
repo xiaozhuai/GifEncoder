@@ -40,8 +40,7 @@ static void getRasterBits(uint8_t *rasterBits, const uint8_t *pixels, int nPixel
 }
 
 inline void RGB2BGR(uint8_t *dst, const uint8_t *src, int width, int height) {
-    const uint8_t *dstEnd = dst + width * height * 3;
-    for (; dst < dstEnd; src += 3) {
+    for (const uint8_t *dstEnd = dst + width * height * 3; dst < dstEnd; src += 3) {
         *(dst++) = *(src + 2);
         *(dst++) = *(src + 1);
         *(dst++) = *(src);
@@ -49,8 +48,7 @@ inline void RGB2BGR(uint8_t *dst, const uint8_t *src, int width, int height) {
 }
 
 inline void BGRA2BGR(uint8_t *dst, const uint8_t *src, int width, int height) {
-    const uint8_t *dstEnd = dst + width * height * 3;
-    for (; dst < dstEnd; src += 4) {
+    for (const uint8_t *dstEnd = dst + width * height * 3; dst < dstEnd; src += 4) {
         *(dst++) = *(src);
         *(dst++) = *(src + 1);
         *(dst++) = *(src + 2);
@@ -58,8 +56,7 @@ inline void BGRA2BGR(uint8_t *dst, const uint8_t *src, int width, int height) {
 }
 
 inline void RGBA2BGR(uint8_t *dst, const uint8_t *src, int width, int height) {
-    const uint8_t *dstEnd = dst + width * height * 3;
-    for (; dst < dstEnd; src += 4) {
+    for (const uint8_t *dstEnd = dst + width * height * 3; dst < dstEnd; src += 4) {
         *(dst++) = *(src + 2);
         *(dst++) = *(src + 1);
         *(dst++) = *(src);

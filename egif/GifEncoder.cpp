@@ -185,11 +185,13 @@ bool GifEncoder::close() {
         return false;
     }
 
+    ColorMapObject *globalColorMap = nullptr;
+
     if (m_useGlobalColorMap) {
-        auto *colorMap = GifMakeMapObject(256, nullptr);
-        getColorMap((uint8_t *) colorMap->Colors, m_framePixels,
+        globalColorMap = GifMakeMapObject(256, nullptr);
+        getColorMap((uint8_t *) globalColorMap->Colors, m_framePixels,
                     m_frameWidth * m_frameHeight * m_frameCount, m_quality);
-        m_gifFile->SColorMap = colorMap;
+        m_gifFile->SColorMap = globalColorMap;
 
         for (int i = 0; i < m_frameCount; ++i) {
             auto *pixels = m_framePixels + m_frameWidth * m_frameHeight * 3 * i;
@@ -200,6 +202,12 @@ bool GifEncoder::close() {
         }
     }
 
+    int extCount = m_gifFile->ExtensionBlockCount;
+    auto *extBlocks = m_gifFile->ExtensionBlocks;
+
+    int savedImageCount = m_gifFile->ImageCount;
+    auto *savedImages = m_gifFile->SavedImages;
+
     int error;
     if (EGifSpew(m_gifFile) == GIF_ERROR) {
         EGifCloseFile(m_gifFile, &error);
@@ -207,8 +215,25 @@ bool GifEncoder::close() {
         return false;
     }
 
-    GifFreeExtensions(&m_gifFile->ExtensionBlockCount, &m_gifFile->ExtensionBlocks);
-    GifFreeSavedImages(m_gifFile);
+    if (globalColorMap != nullptr) {
+        GifFreeMapObject(globalColorMap);
+    }
+
+    GifFreeExtensions(&extCount, &extBlocks);
+    for (auto *sp = savedImages; sp < savedImages + savedImageCount; sp++) {
+        if (sp->ImageDesc.ColorMap != nullptr) {
+            GifFreeMapObject(sp->ImageDesc.ColorMap);
+            sp->ImageDesc.ColorMap = nullptr;
+        }
+
+        if (sp->RasterBits != nullptr) {
+            free((char *)sp->RasterBits);
+            sp->RasterBits = nullptr;
+        }
+
+        GifFreeExtensions(&sp->ExtensionBlockCount, &sp->ExtensionBlocks);
+    }
+    free(savedImages);
 
     m_gifFileHandler = nullptr;
 
@@ -218,16 +243,17 @@ bool GifEncoder::close() {
 }
 
 void GifEncoder::encodeFrame(int width, int height, int delay, void *colorMap, void *rasterBits) {
-    SavedImage gifImage;
-    gifImage.ImageDesc.Left = 0;
-    gifImage.ImageDesc.Top = 0;
-    gifImage.ImageDesc.Width = width;
-    gifImage.ImageDesc.Height = height;
-    gifImage.ImageDesc.Interlace = false;
-    gifImage.ImageDesc.ColorMap = (ColorMapObject *) colorMap;
-    gifImage.RasterBits = (GifByteType *) rasterBits;
-    gifImage.ExtensionBlockCount = 0;
-    gifImage.ExtensionBlocks = nullptr;
+    auto *gifImage = GifMakeSavedImage(m_gifFile, nullptr);
+
+    gifImage->ImageDesc.Left = 0;
+    gifImage->ImageDesc.Top = 0;
+    gifImage->ImageDesc.Width = width;
+    gifImage->ImageDesc.Height = height;
+    gifImage->ImageDesc.Interlace = false;
+    gifImage->ImageDesc.ColorMap = (ColorMapObject *) colorMap;
+    gifImage->RasterBits = (GifByteType *) rasterBits;
+    gifImage->ExtensionBlockCount = 0;
+    gifImage->ExtensionBlocks = nullptr;
 
     GraphicsControlBlock gcb;
     gcb.DisposalMode = DISPOSE_DO_NOT;
@@ -236,7 +262,5 @@ void GifEncoder::encodeFrame(int width, int height, int delay, void *colorMap, v
     gcb.TransparentColor = NO_TRANSPARENT_COLOR;
     uint8_t gcbBytes[4];
     EGifGCBToExtension(&gcb, gcbBytes);
-    GifAddExtensionBlockFor(&gifImage, GRAPHICS_EXT_FUNC_CODE, sizeof(gcbBytes), gcbBytes);
-
-    GifMakeSavedImage(m_gifFile, &gifImage);
+    GifAddExtensionBlockFor(gifImage, GRAPHICS_EXT_FUNC_CODE, sizeof(gcbBytes), gcbBytes);
 }

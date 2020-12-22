@@ -69,6 +69,7 @@ public:
             stbi_image_free(data);
             needFree = false;
         }
+        data = nullptr;
         format = GifEncoder::PIXEL_FORMAT_UNKNOWN;
         width = 0;
         height = 0;

@@ -40,26 +40,29 @@ static void getRasterBits(uint8_t *rasterBits, const uint8_t *pixels, int nPixel
 }
 
 inline void RGB2BGR(uint8_t *dst, const uint8_t *src, int width, int height) {
-    for (int i = 0; i < width * height; ++i) {
-        dst[i * 3] = src[i * 3 + 2];
-        dst[i * 3 + 1] = src[i * 3 + 1];
-        dst[i * 3 + 2] = src[i * 3];
+    const uint8_t *dstEnd = dst + width * height * 3;
+    for (; dst < dstEnd; src += 3) {
+        *(dst++) = *(src + 2);
+        *(dst++) = *(src + 1);
+        *(dst++) = *(src);
     }
 }
 
 inline void BGRA2BGR(uint8_t *dst, const uint8_t *src, int width, int height) {
-    for (int i = 0; i < width * height; ++i) {
-        dst[i * 3] = src[i * 4];
-        dst[i * 3 + 1] = src[i * 4 + 1];
-        dst[i * 3 + 2] = src[i * 4 + 2];
+    const uint8_t *dstEnd = dst + width * height * 3;
+    for (; dst < dstEnd; src += 4) {
+        *(dst++) = *(src);
+        *(dst++) = *(src + 1);
+        *(dst++) = *(src + 2);
     }
 }
 
 inline void RGBA2BGR(uint8_t *dst, const uint8_t *src, int width, int height) {
-    for (int i = 0; i < width * height; ++i) {
-        dst[i * 3] = src[i * 4 + 2];
-        dst[i * 3 + 1] = src[i * 4 + 1];
-        dst[i * 3 + 2] = src[i * 4];
+    const uint8_t *dstEnd = dst + width * height * 3;
+    for (; dst < dstEnd; src += 4) {
+        *(dst++) = *(src + 2);
+        *(dst++) = *(src + 1);
+        *(dst++) = *(src);
     }
 }
 

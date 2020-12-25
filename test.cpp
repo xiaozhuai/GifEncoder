@@ -1,18 +1,7 @@
-# GifEncoder
+//
+// Created by xiaozhuai on 2020/12/25.
+//
 
-C++ gif encoder with good quality!
-
-Use Neural-Net quantization algorithm by Anthony Dekker for generating colormap.
-
-Use [giflib](https://sourceforge.net/projects/giflib/) for encoding gif.
-
-Use stb_image for image loading in demo code.
-
-# Usage
-
-Just copy gif directory to your project, and include GifEncoder.h, that's all.
-
-```cpp
 #include "GifEncoder.h"
 
 int main() {
@@ -49,36 +38,3 @@ int main() {
         return 1;
     }
 }
-```
-
-More complex demo code is in `demo.cpp`.
-
-# Build
-
-Use cmake to build demo.
-
-## Linux or MacOS
-
-```bash
-mkdir build
-cd build
-cmake -DCMAKE_BUILD_TYPE=Release ..
-make
-./egif_demo
-```
-
-## Windows
-
-Open Visual Studio Command Prompt and run these command
-
-```bat
-md build
-cd build
-cmake -DCMAKE_BUILD_TYPE=Release -G "NMake Makefiles" ..
-nmake
-egif_demo.exe
-```
-
-## Android & iOS
-
-Build it by yourself

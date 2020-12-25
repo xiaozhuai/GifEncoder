@@ -10,7 +10,7 @@ Use stb_image for image loading in demo code.
 
 # Usage
 
-Just copy gif directory to your project, and include GifEncoder.h, that's all.
+Just copy gif directory to your project, and include `GifEncoder.h`, that's all.
 
 ```cpp
 #include "GifEncoder.h"
@@ -32,6 +32,7 @@ int main() {
     bool useGlobalColorMap = true;
     int loop = 0;
     int preAllocSize = useGlobalColorMap ? w * h * 3 * 3 : w * h * 3;
+    int delay = 20;
 
     GifEncoder gifEncoder;
 
@@ -40,9 +41,9 @@ int main() {
         return 1;
     }
 
-    gifEncoder.push(GifEncoder::PIXEL_FORMAT_RGBA, (uint8_t *) frame0, w, h, 20);
-    gifEncoder.push(GifEncoder::PIXEL_FORMAT_RGBA, (uint8_t *) frame1, w, h, 20);
-    gifEncoder.push(GifEncoder::PIXEL_FORMAT_RGBA, (uint8_t *) frame2, w, h, 20);
+    gifEncoder.push(GifEncoder::PIXEL_FORMAT_RGBA, (uint8_t *) frame0, w, h, delay);
+    gifEncoder.push(GifEncoder::PIXEL_FORMAT_RGBA, (uint8_t *) frame1, w, h, delay);
+    gifEncoder.push(GifEncoder::PIXEL_FORMAT_RGBA, (uint8_t *) frame2, w, h, delay);
 
     if (!gifEncoder.close()) {
         fprintf(stderr, "Error close gif file\n");

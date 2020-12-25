@@ -2,6 +2,7 @@
 // Created by xiaozhuai on 2020/12/25.
 //
 
+#include <cstdio>
 #include "GifEncoder.h"
 
 int main() {
@@ -38,4 +39,6 @@ int main() {
         fprintf(stderr, "Error close gif file\n");
         return 1;
     }
+
+    return 0;
 }

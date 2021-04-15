@@ -8,6 +8,11 @@ Use [giflib](https://sourceforge.net/projects/giflib/) for encoding gif.
 
 Use stb_image for image loading in demo code.
 
+[![CI linux](https://github.com/xiaozhuai/GifEncoder/workflows/linux/badge.svg)](https://github.com/xiaozhuai/GifEncoder/actions?query=workflow%3Alinux)
+[![CI macos](https://github.com/xiaozhuai/GifEncoder/workflows/macos/badge.svg)](https://github.com/xiaozhuai/GifEncoder/actions?query=workflow%3Amacos)
+[![CI windows-x86](https://github.com/xiaozhuai/GifEncoder/workflows/windows-x86/badge.svg)](https://github.com/xiaozhuai/GifEncoder/actions?query=workflow%3Awindows-x86)
+[![CI windows-x64](https://github.com/xiaozhuai/GifEncoder/workflows/windows-x64/badge.svg)](https://github.com/xiaozhuai/GifEncoder/actions?query=workflow%3Awindows-x64)
+
 # Usage
 
 Just copy gif directory to your project, and include `GifEncoder.h`, that's all.

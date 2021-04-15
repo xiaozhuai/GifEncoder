@@ -1,0 +1,41 @@
+name: linux
+
+on:
+    push:
+        branches: [ master ]
+    pull_request:
+        branches: [ master ]
+
+jobs:
+    build-linux:
+        runs-on: ubuntu-latest
+        steps:
+            -   name: Checkout
+                uses: actions/checkout@v2
+                with:
+                    submodules: recursive
+            -   name: Build
+                run: |
+                    mkdir build
+                    cd build
+                    cmake -DCMAKE_BUILD_TYPE=Release ..
+                    make
+                    ./egif_demo
+            -   name: Copy File
+                run: |
+                    cd build
+                    mkdir egif
+                    mkdir egif/bin/
+                    mkdir egif/include
+                    mkdir egif/lib
+                    mkdir egif/gif
+                    cp -rf ../frames egif/
+                    cp -f *.gif egif/gif/
+                    cp -f egif_demo egif/bin/
+                    cp -f libegif.a egif/lib/
+                    cp -f ../egif/GifEncoder.h egif/include/
+            -   name: Upload Artifact
+                uses: actions/upload-artifact@v2
+                with:
+                    name: egif-linux-x64
+                    path: build/egif

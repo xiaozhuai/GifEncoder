@@ -66,11 +66,9 @@ Use cmake to build demo.
 ## Linux or MacOS
 
 ```bash
-mkdir build
-cd build
-cmake -DCMAKE_BUILD_TYPE=Release ..
-make
-./egif_demo
+cmake -DCMAKE_BUILD_TYPE=Release -B build .
+cmake --build build -- all
+./build/egif_demo
 ```
 
 ## Windows
@@ -78,11 +76,9 @@ make
 Open Visual Studio Command Prompt and run these command
 
 ```bat
-md build
-cd build
-cmake -DCMAKE_BUILD_TYPE=Release -G "NMake Makefiles" ..
-nmake
-egif_demo.exe
+cmake -DCMAKE_BUILD_TYPE=Release -G "NMake Makefiles" -B build .
+cmake --build build -- all
+.\build\egif_demo.exe
 ```
 
 ## Android & iOS

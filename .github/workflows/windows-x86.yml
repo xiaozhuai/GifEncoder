@@ -18,11 +18,9 @@ jobs:
                 shell: cmd
                 run: |
                     call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars32.bat"
-                    md build
-                    cd build
-                    cmake -DCMAKE_BUILD_TYPE=Release -GNinja ..
-                    ninja
-                    egif_demo.exe
+                    cmake -DCMAKE_BUILD_TYPE=Release -GNinja -B build .
+                    cmake --build build -- all
+                    .\build\egif_demo.exe
             -   name: Copy File
                 shell: bash
                 run: |

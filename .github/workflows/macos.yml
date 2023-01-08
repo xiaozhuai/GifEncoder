@@ -16,12 +16,9 @@ jobs:
                     submodules: recursive
             -   name: Build
                 run: |
-                    sudo xcode-select -s /Library/Developer/CommandLineTools
-                    mkdir build
-                    cd build
-                    cmake -DCMAKE_BUILD_TYPE=Release ..
-                    make
-                    ./egif_demo
+                    cmake -DCMAKE_BUILD_TYPE=Release -B build .
+                    cmake --build build -- all
+                    ./build/egif_demo
             -   name: Copy File
                 run: |
                     cd build

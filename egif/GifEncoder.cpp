@@ -215,26 +215,6 @@ bool GifEncoder::close() {
         return false;
     }
 
-    if (globalColorMap != nullptr) {
-        GifFreeMapObject(globalColorMap);
-    }
-
-    GifFreeExtensions(&extCount, &extBlocks);
-    for (auto *sp = savedImages; sp < savedImages + savedImageCount; sp++) {
-        if (sp->ImageDesc.ColorMap != nullptr) {
-            GifFreeMapObject(sp->ImageDesc.ColorMap);
-            sp->ImageDesc.ColorMap = nullptr;
-        }
-
-        if (sp->RasterBits != nullptr) {
-            free((char *)sp->RasterBits);
-            sp->RasterBits = nullptr;
-        }
-
-        GifFreeExtensions(&sp->ExtensionBlockCount, &sp->ExtensionBlocks);
-    }
-    free(savedImages);
-
     m_gifFileHandler = nullptr;
 
     reset();

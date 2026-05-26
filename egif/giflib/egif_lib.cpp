@@ -595,7 +595,7 @@ int EGifPutExtensionBlock(GifFileType *GifFile, const int ExtLen,
 
 	Buf = ExtLen;
 	InternalWrite(GifFile, &Buf, 1);
-	InternalWrite(GifFile, Extension, ExtLen);
+	InternalWrite(GifFile, (unsigned char*)Extension, ExtLen);
 
 	return GIF_OK;
 }
@@ -647,7 +647,7 @@ int EGifPutExtension(GifFileType *GifFile, const int ExtCode, const int ExtLen,
 		Buf[2] = ExtLen;  /* Extension length */
 		InternalWrite(GifFile, Buf, 3);
 	}
-	InternalWrite(GifFile, Extension, ExtLen);
+	InternalWrite(GifFile, (unsigned char*)Extension, ExtLen);
 	Buf[0] = 0;
 	InternalWrite(GifFile, Buf, 1);
 

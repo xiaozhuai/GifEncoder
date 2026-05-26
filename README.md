@@ -78,7 +78,8 @@ Open Visual Studio Command Prompt and run these command
 ```bat
 cmake -DCMAKE_BUILD_TYPE=Release -G "NMake Makefiles" -B build .
 cmake --build build -- all
-.\build\egif_demo.exe
+cd .\build
+.\egif_demo.exe
 ```
 
 ## Android & iOS

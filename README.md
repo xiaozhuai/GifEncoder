@@ -68,7 +68,8 @@ Use cmake to build demo.
 ```bash
 cmake -DCMAKE_BUILD_TYPE=Release -B build .
 cmake --build build -- all
-./build/egif_demo
+cd ./build
+./egif_demo
 ```
 
 ## Windows

@@ -1,0 +1,21 @@
+void Example::Example(std::string gifTempPath, int frames, int w, int h){
+GifEncoder* e = new GifEncoder();
+e->setTransparent(0, 0, 0); // black is transparent
+e->open_parallel(ConvertToStdString(gifTempPath), w, h, 1, false, 0, true, &cancel->Token)
+for(int i = 0; i < frames; ++i) task[i] = std::thread(&Example::ParallelThread, this, e, i, w, h);
+for(int i = 0; i < frames; ++i) if(task[i].joinable()) task[i].join();
+e->close(true, true, &cancel->Token);
+while(true){ int u = e->getFinishedFrame();
+switch(result = e->tryWrite(true, &cancel->Token))
+case GifEncoderTryWriteResult::Failed: return "failed";
+case GifEncoderTryWriteResult::FinishedFrame: b[u]->UnlockBits(d[u]);break;
+case GifEncoderTryWriteResult::FinishedAnimation: return "success";
+}}}
+void Example::ParallelThread(GifEncoder* e, int i, int w, int h){
+r = Rectangle(0, 0, w, h);
+b[i] = gcnew Bitmap(w, h); // b is Bitmap[], d is BitmapData[]
+d[i] = b[i]->LockBits(r, ImageLockMode::WriteOnly, PixelFormat::Format24bppRgb);
+uint8_t* p, mp = p = (uint8_t*)(void*)d[i]->Scan0;
+for(int y = 0; y<h; ++y)for(int x = 0; x<w; ++x){p[2]=blue;p[1]=green;p[0]=red;p+=3;}
+e->push_parallel(mp, w, h, delay, i, true, &cancel->Token);
+}

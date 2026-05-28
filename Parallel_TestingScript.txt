@@ -1,0 +1,120 @@
+void TestEncoder(array<Bitmap^>^ bitmap, const int selectWidth, const int selectHeight) {
+
+	// init
+	GifEncoder* se = new GifEncoder();
+	GifEncoder* pe = new GifEncoder();
+	GifEncoder* se_out = new GifEncoder();
+	GifEncoder* pe_out = new GifEncoder();
+	List<int>^ l = gcnew List<int>();
+
+	// get byte pointers if we don't have already:
+	array<BitmapData^>^ bgr = gcnew array<BitmapData^>(bitmap->Length);
+	array<BitmapData^>^ bgra = gcnew array<BitmapData^>(bitmap->Length);
+	for (int i = 0; i < bitmap->Length; ++i) {
+		bgr[i] = bitmap[i]->LockBits(Rectangle(0, 0, bitmap[i]->Width, bitmap[i]->Height), ImageLockMode::ReadOnly, PixelFormat::Format24bppRgb); // get BRG (also used for RGB)
+		bgra[i] = bitmap[i]->LockBits(Rectangle(0, 0, bitmap[i]->Width, bitmap[i]->Height), ImageLockMode::ReadOnly, PixelFormat::Format32bppArgb); // get BRGA (also used for RGBA)
+	}
+
+	// BGR/BGRA:
+	se->open("s_bgr_inorder.gif", selectWidth, selectHeight, 1, false, 0);
+	pe->open_parallel("p_bgr_inorder.gif", selectWidth, selectHeight, 1, false, 0);
+	se_out->open("s_bgr_outoforder.gif", selectWidth, selectHeight, 1, false, 0);
+	pe_out->open_parallel("p_bgr_outoforder.gif", selectWidth, selectHeight, 1, false, 0);
+	for (int i = 0; i < bitmap->Length; l->Add(i++)) {
+		uint8_t* frame_bgr = (uint8_t*)(void*)bgr[i]->Scan0;
+		uint8_t* frame_bgra = (uint8_t*)(void*)bgra[i]->Scan0;
+		// BGR NATIVE:
+		se->push(frame_bgr, selectWidth, selectHeight, 20);
+		pe->push_parallel(frame_bgr, selectWidth, selectHeight, 20);
+		// BGR copy:
+		//se->push(GifEncoderPixelFormat::PIXEL_FORMAT_BGR, frame_bgr, selectWidth, selectHeight, 20);
+		//pe->push_parallel(GifEncoderPixelFormat::PIXEL_FORMAT_BGR, frame_bgr, selectWidth, selectHeight, 20);
+		// BGRA copy:
+		//se->push(GifEncoderPixelFormat::PIXEL_FORMAT_BGRA, frame_bgra, selectWidth, selectHeight, 20);
+		//pe->push_parallel(GifEncoderPixelFormat::PIXEL_FORMAT_BGRA, frame_bgra, selectWidth, selectHeight, 20);
+	}
+	while (l->Count > 0) {
+		int i = l[random.Next(0, l->Count)];
+		l->Remove(i);
+		uint8_t* frame_bgr = (uint8_t*)(void*)bgr[i]->Scan0;
+		uint8_t* frame_bgra = (uint8_t*)(void*)bgra[i]->Scan0;
+		// BGR NATIVE:
+		se_out->push(frame_bgr, selectWidth, selectHeight, 20, i);
+		pe_out->push_parallel(frame_bgr, selectWidth, selectHeight, 20, i);
+		// BGR copy:
+		//se_out->push(GifEncoderPixelFormat::PIXEL_FORMAT_BGR, frame_bgr, selectWidth, selectHeight, 20, i);
+		//pe_out->push_parallel(GifEncoderPixelFormat::PIXEL_FORMAT_BGR, frame_bgr, selectWidth, selectHeight, 20, i);
+		// BGRA copy:
+		//se_out->push(GifEncoderPixelFormat::PIXEL_FORMAT_BGRA, frame_bgra, selectWidth, selectHeight, 20, i);
+		//pe_out->push_parallel(GifEncoderPixelFormat::PIXEL_FORMAT_BGRA, frame_bgra, selectWidth, selectHeight, 20, i);
+	}
+	se->close();
+	pe->close();
+	se_out->close();
+	pe_out->close();
+	for (int i = 0; i <= bitmap->Length; ++i) {
+		pe->tryWrite();
+		pe_out->tryWrite();
+	}
+
+	// RGB/RGBA:
+	uint8_t** rgb = new uint8_t * [bitmap->Length];
+	uint8_t** rgba = new uint8_t * [bitmap->Length];
+	for (int i = 0; i < bitmap->Length; ++i) {
+		// RGB
+		uint8_t* p = rgb[i] = new uint8_t[selectWidth * selectHeight * 3],
+			* s = (uint8_t*)(void*)bgr[i]->Scan0;
+		for (int i = selectWidth * selectHeight; 0 <= --i; p += 3, s += 3) {
+			p[0] = s[2];
+			p[1] = s[1];
+			p[2] = s[0];
+		}
+		// RBGA
+		p = rgba[i] = new uint8_t[selectWidth * selectHeight * 4];
+		s = (uint8_t*)(void*)bgra[i]->Scan0;
+		for (int i = selectWidth * selectHeight; 0 <= --i; p += 4, s += 4) {
+			p[0] = s[2];
+			p[1] = s[1];
+			p[2] = s[0];
+			p[3] = s[3];
+		}
+	}
+	se->open("s_rgb_inorder.gif", selectWidth, selectHeight, 1, false, 0);
+	pe->open_parallel("p_rgb_inorder.gif", selectWidth, selectHeight, 1, false, 0);
+	se_out->open("s_rgb_outoforder.gif", selectWidth, selectHeight, 1, false, 0);
+	pe_out->open_parallel("p_rgb_outoforder.gif", selectWidth, selectHeight, 1, false, 0);
+	for (int i = 0; i < bitmap->Length; l->Add(i++)) {
+		// RGB copy:
+		se->push(GifEncoderPixelFormat::PIXEL_FORMAT_RGB, rgb[i], selectWidth, selectHeight, 20);
+		pe->push_parallel(GifEncoderPixelFormat::PIXEL_FORMAT_RGB, rgb[i], selectWidth, selectHeight, 20);
+		// RGBA copy:
+		//se->push(GifEncoderPixelFormat::PIXEL_FORMAT_RGBA, rgba[i], selectWidth, selectHeight, 20);
+		//pe->push_parallel(GifEncoderPixelFormat::PIXEL_FORMAT_RGBA, rgba[i], selectWidth, selectHeight, 20);
+	}
+	while (l->Count > 0) {
+		int i = l[random.Next(0, l->Count)];
+		l->Remove(i);
+		// RGB copy:
+		se_out->push(GifEncoderPixelFormat::PIXEL_FORMAT_RGB, rgb[i], selectWidth, selectHeight, 20, i);
+		pe_out->push_parallel(GifEncoderPixelFormat::PIXEL_FORMAT_RGB, rgb[i], selectWidth, selectHeight, 20, i);
+		// RGBA copy: 
+		//se_out->push(GifEncoderPixelFormat::PIXEL_FORMAT_RGBA, rgba[i], selectWidth, selectHeight, 20, i);
+		//pe_out->push_parallel(GifEncoderPixelFormat::PIXEL_FORMAT_RGBA, rgba[i], selectWidth, selectHeight, 20, i);
+	}
+	se->close();
+	pe->close();
+	se_out->close();
+	pe_out->close();
+	for (int i = 0; i <= bitmap->Length; ++i) {
+		pe->tryWrite();
+		pe_out->tryWrite();
+	}
+
+	// release byte pointers and encoders:
+	for (int i = 0; i < bitmap->Length; ++i)
+		bitmap[i]->UnlockBits(bitmapData[i]);
+	delete se;
+	delete pe;
+	delete se_out;
+	delete pe_out;
+}

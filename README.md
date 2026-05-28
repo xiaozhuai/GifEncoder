@@ -8,10 +8,7 @@ Use [giflib](https://sourceforge.net/projects/giflib/) for encoding gif.
 
 Use stb_image for image loading in demo code.
 
-[![linux](https://github.com/xiaozhuai/GifEncoder/actions/workflows/linux.yml/badge.svg)](https://github.com/xiaozhuai/GifEncoder/actions/workflows/linux.yml)
-[![macos](https://github.com/xiaozhuai/GifEncoder/actions/workflows/macos.yml/badge.svg)](https://github.com/xiaozhuai/GifEncoder/actions/workflows/macos.yml)
-[![windows-x64](https://github.com/xiaozhuai/GifEncoder/actions/workflows/windows-x64.yml/badge.svg)](https://github.com/xiaozhuai/GifEncoder/actions/workflows/windows-x64.yml)
-[![windows-x86](https://github.com/xiaozhuai/GifEncoder/actions/workflows/windows-x86.yml/badge.svg)](https://github.com/xiaozhuai/GifEncoder/actions/workflows/windows-x86.yml)
+[![ci](https://github.com/xiaozhuai/GifEncoder/actions/workflows/ci.yml/badge.svg)](https://github.com/xiaozhuai/GifEncoder/actions/workflows/ci.yml)
 
 # Usage
 

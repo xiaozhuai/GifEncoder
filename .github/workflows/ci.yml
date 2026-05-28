@@ -1,0 +1,82 @@
+name: ci
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  windows:
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      matrix:
+        runner:
+          - windows-2022
+          - windows-2025
+        arch:
+          - x64
+          - x86
+          - amd64_arm64
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          submodules: recursive
+      - uses: TheMrMilchmann/setup-msvc-dev@v4
+        with:
+          arch: ${{ matrix.arch }}
+      - name: Build
+        shell: cmd
+        run: |
+          cmake -GNinja -B build .
+          cmake --build build --target all
+      - name: Test
+        if: ${{ matrix.arch != 'amd64_arm64' }}
+        shell: cmd
+        run: |
+          .\build\egif_demo.exe
+
+  macos:
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      matrix:
+        runner:
+          - macos-14
+          - macos-15
+        arch:
+          - x86_64
+          - arm64
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          submodules: recursive
+      - name: Build
+        run: |
+          cmake -DCMAKE_OSX_ARCHITECTURES=${{matrix.arch}} -B build .
+          cmake --build build --target all
+      - name: Test
+        if: ${{ matrix.runner == 'macos-14' || matrix.arch != 'arm64' }}
+        run: |
+          ./build/egif_demo
+
+  linux:
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      matrix:
+        runner:
+          - ubuntu-22.04
+          - ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          submodules: recursive
+      - name: Build
+        run: |
+          cmake -B build .
+          cmake --build build --target all
+      - name: Test
+        run: |
+          ./build/egif_demo

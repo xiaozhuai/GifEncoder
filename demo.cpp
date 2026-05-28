@@ -3,6 +3,7 @@
 #include <iostream>
 #include <vector>
 #include <chrono>
+#include <inttypes.h>
 #include "stb_image.h"
 #include "GifEncoder.h"
 
@@ -137,7 +138,7 @@ void encodeGif(const char *fmt, int count, const char *output,
 
     releaseImages(frames);
 
-    printf("Encoded %s, spend %lldμs\n", output, NOW - lastTime);
+    printf("Encoded %s, spend %" PRId64 "μs\n", output, NOW - lastTime);
 }
 
 int main() {
@@ -150,22 +151,22 @@ int main() {
      * delay: delay * 0.01s
      */
 
-    encodeGif("../frames/frame_%d.jpg", 4, "out_lcm.gif",
+    encodeGif("frames/frame_%d.jpg", 4, "out_lcm.gif",
               600, 392,
               10, 20,
               false, 600 * 392 * 3);
 
-    encodeGif("../frames/frame_%d.jpg", 4, "out_gcm.gif",
+    encodeGif("frames/frame_%d.jpg", 4, "out_gcm.gif",
               600, 392,
               10, 20,
               true, 600 * 392 * 3 * 4);
 
-//    encodeGif("../frames2/frame_%d.jpg", 40, "test_lcm.gif",
+//    encodeGif("frames2/frame_%d.jpg", 40, "test_lcm.gif",
 //              360, 360,
 //              10, 10,
 //              false, 360 * 360 * 3);
 //
-//    encodeGif("../frames2/frame_%d.jpg", 40, "test_gcm.gif",
+//    encodeGif("frames2/frame_%d.jpg", 40, "test_gcm.gif",
 //              360, 360,
 //              10, 10,
 //              true, 360 * 360 * 3 * 40);

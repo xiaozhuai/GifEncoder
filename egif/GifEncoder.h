@@ -9,7 +9,7 @@
 #include <vector>
 #include <cstdint>
 
-class GifEncoder {
+class GifEncoder final {
 public:
     enum PixelFormat {
         PIXEL_FORMAT_UNKNOWN = 0,
@@ -19,7 +19,8 @@ public:
         PIXEL_FORMAT_RGBA = 4,
     };
 public:
-    GifEncoder() = default;
+    GifEncoder();
+    ~GifEncoder();
 
     /**
      * create gif file
@@ -58,11 +59,11 @@ public:
     bool close();
 
 private:
-    inline bool isFirstFrame() const {
+    bool isFirstFrame() const {
         return m_frameCount == 0;
     }
 
-    inline void reset() {
+    void reset() {
         if (m_framePixels != nullptr) {
             free(m_framePixels);
             m_framePixels = nullptr;

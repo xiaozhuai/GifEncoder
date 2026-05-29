@@ -83,6 +83,9 @@ static bool convertToBGR(GifEncoder::PixelFormat format, uint8_t *dst, const uin
     return true;
 }
 
+GifEncoder::GifEncoder() = default;
+GifEncoder::~GifEncoder() { close(); }
+
 bool GifEncoder::open(const std::string &file, int width, int height,
                       int quality, bool useGlobalColorMap, int16_t loop, int preAllocSize) {
     if (m_gifFile != nullptr) {

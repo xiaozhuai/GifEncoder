@@ -83,6 +83,9 @@ static bool convertToBGR(GifEncoder::PixelFormat format, uint8_t *dst, const uin
     return true;
 }
 
+GifEncoder::GifEncoder() = default;
+GifEncoder::~GifEncoder() { close(); }
+
 bool GifEncoder::open(const std::string &file, int width, int height,
                       int quality, bool useGlobalColorMap, int16_t loop, int preAllocSize) {
     if (m_gifFile != nullptr) {
@@ -209,31 +212,11 @@ bool GifEncoder::close() {
     auto *savedImages = m_gifFile->SavedImages;
 
     int error;
-    if (EGifSpew(m_gifFile) == GIF_ERROR) {
+    if (EGifSpew(m_gifFile, &error) == GIF_ERROR || error != E_GIF_SUCCEEDED) {
         EGifCloseFile(m_gifFile, &error);
         m_gifFileHandler = nullptr;
         return false;
     }
-
-    if (globalColorMap != nullptr) {
-        GifFreeMapObject(globalColorMap);
-    }
-
-    GifFreeExtensions(&extCount, &extBlocks);
-    for (auto *sp = savedImages; sp < savedImages + savedImageCount; sp++) {
-        if (sp->ImageDesc.ColorMap != nullptr) {
-            GifFreeMapObject(sp->ImageDesc.ColorMap);
-            sp->ImageDesc.ColorMap = nullptr;
-        }
-
-        if (sp->RasterBits != nullptr) {
-            free((char *)sp->RasterBits);
-            sp->RasterBits = nullptr;
-        }
-
-        GifFreeExtensions(&sp->ExtensionBlockCount, &sp->ExtensionBlocks);
-    }
-    free(savedImages);
 
     m_gifFileHandler = nullptr;
 
